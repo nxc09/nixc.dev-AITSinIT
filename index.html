@@ -1,0 +1,2327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="AITS Member Portal"
+    >
+
+    <title>AITS Portal</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+
+<body>
+
+    <!-- ==================================
+         HEADER
+    =================================== -->
+
+    <header class="site-header">
+
+        <div class="header-inner">
+
+            <button
+                class="brand"
+                type="button"
+                data-go-to="home"
+            >
+                <span class="brand-mark">
+                    A
+                </span>
+
+                <span class="brand-name">
+                    AITS
+                </span>
+            </button>
+
+
+            <nav
+                class="desktop-nav"
+                aria-label="Desktop navigation"
+            >
+
+                <button
+                    class="desktop-nav-button active"
+                    type="button"
+                    data-go-to="home"
+                >
+                    Home
+                </button>
+
+                <button
+                    class="desktop-nav-button"
+                    type="button"
+                    data-go-to="events"
+                >
+                    Events
+                </button>
+
+                <button
+                    class="desktop-nav-button"
+                    type="button"
+                    data-go-to="journey"
+                >
+                    Journey
+                </button>
+
+            </nav>
+
+
+            <!-- Profile Menu -->
+
+            <div class="profile-menu-wrapper">
+
+                <button
+                    class="profile-trigger"
+                    id="profile-trigger"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="profile-menu"
+                >
+
+                    <span
+                        class="profile-name"
+                        id="header-name"
+                    >
+                        Nixc
+                    </span>
+
+                    <span
+                        class="profile-chevron"
+                        aria-hidden="true"
+                    ></span>
+
+                </button>
+
+
+                <div class="profile-menu" id="profile-menu">
+
+                    <button id="open-profile-button" type="button">
+                        My Profile
+                    </button>
+
+                    <button type="button">
+                        Settings
+                    </button>
+
+
+                    <!-- Only shown to users with Management access -->
+
+                    <div
+                        class="management-menu-section"
+                        id="management-menu-section"
+                    >
+
+                        <div class="menu-divider"></div>
+
+                        <button
+                            id="open-management-button"
+                            type="button"
+                        >
+                            Management
+                        </button>
+
+                    </div>
+
+
+                    <div class="menu-divider"></div>
+
+                    <button
+                        class="logout-button"
+                        type="button"
+                    >
+                        Log Out
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- ==================================
+         MAIN APPLICATION
+    =================================== -->
+
+    <main class="app-shell">
+
+
+        <!-- ==================================
+             HOME
+        =================================== -->
+
+        <section
+            class="page active"
+            data-page="home"
+        >
+
+            <div class="page-intro">
+
+                <p class="eyebrow">
+                    MEMBER HOME
+                </p>
+
+                <h1>
+                    Welcome back,
+                    <span id="welcome-name">
+                        Nixc
+                    </span>.
+                </h1>
+
+            </div>
+
+
+            <!-- Member Card -->
+
+<div class="member-card-wrapper">
+
+    <div
+        class="member-card"
+        id="member-card"
+        role="button"
+        tabindex="0"
+        aria-label="Flip member card"
+        aria-pressed="false"
+    >
+
+        <div class="member-card-inner">
+
+
+            <!-- FRONT -->
+
+            <div class="member-card-face member-card-front">
+
+                <div class="member-card-top">
+
+                    <span>
+                        AITS
+                    </span>
+
+                    <span>
+                        MEMBER CARD
+                    </span>
+
+                </div>
+
+
+                <div class="member-card-center">
+
+                    <p id="card-name">
+                        Charlene Frias Hortel
+                    </p>
+
+
+                    <div class="card-role-info">
+
+                        <span id="card-role">
+                            Executive
+                        </span>
+
+                        <span id="card-position">
+                            Vice President Internal — WMA
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="member-card-bottom">
+
+                    <span id="card-specialization">
+                        BSIT-WMA
+                    </span>
+
+                    <span id="card-member-id">
+                        AITS-25011
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- BACK -->
+
+            <div class="member-card-face member-card-back">
+
+                <div class="member-card-top">
+
+                    <span>
+                        AITS
+                    </span>
+
+                    <span>
+                        MEMBER QR
+                    </span>
+
+                </div>
+
+
+                <div class="card-qr-area">
+
+                    <button
+                        class="card-qr-button"
+                        id="card-qr-button"
+                        type="button"
+                        aria-label="Enlarge member QR code"
+                    >
+
+                        <span
+                            class="card-qr"
+                            id="card-qr"
+                        ></span>
+
+                        <span class="card-qr-hint">
+                            Tap to enlarge
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+                <div class="member-card-bottom">
+
+                    <span id="card-back-name">
+                        Charlene Frias Hortel
+                    </span>
+
+                    <span id="card-back-member-id">
+                        AITS-25011
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+            <!-- Home Overview -->
+
+            <section class="home-overview">
+
+                <article class="stat-card">
+
+                    <p>
+                        Current Points
+                    </p>
+
+                    <div class="stat-value">
+
+                        <strong id="home-points">
+                            140
+                        </strong>
+
+                        <span>
+                            PTS
+                        </span>
+
+                    </div>
+
+                    <button
+                        class="inline-link"
+                        type="button"
+                        data-go-to="journey"
+                    >
+                        View Journey →
+                    </button>
+
+                </article>
+
+
+                <article class="stat-card">
+
+                    <p>
+                        Academic Year
+                    </p>
+
+                    <strong
+                        class="academic-year"
+                        id="home-academic-year"
+                    >
+                        AY 2026–2027
+                    </strong>
+
+                    <span
+                        class="status-pill"
+                        id="membership-status"
+                    >
+                        Active Member
+                    </span>
+
+                </article>
+
+            </section>
+
+
+            <!-- Upcoming Event -->
+
+            <section class="content-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            COMING UP
+                        </p>
+
+                        <h2>
+                            Next Event
+                        </h2>
+
+                    </div>
+
+                    <button
+                        class="inline-link"
+                        type="button"
+                        data-go-to="events"
+                    >
+                        View Events →
+                    </button>
+
+                </div>
+
+
+                <div id="home-event"></div>
+
+            </section>
+
+
+            <!-- Recent Activity -->
+
+            <section class="content-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            YOUR JOURNEY
+                        </p>
+
+                        <h2>
+                            Recent Activity
+                        </h2>
+
+                    </div>
+
+                    <button
+                        class="inline-link"
+                        type="button"
+                        data-go-to="journey"
+                    >
+                        View History →
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="activity-list"
+                    id="home-activity"
+                ></div>
+
+            </section>
+
+        </section>
+
+
+        <!-- ==================================
+             EVENTS
+        =================================== -->
+
+        <section
+            class="page"
+            data-page="events"
+        >
+
+            <div class="page-intro">
+
+                <p class="eyebrow">
+                    AITS EVENTS
+                </p>
+
+                <h1>
+                    Events
+                </h1>
+
+                <p class="page-description">
+                    Discover upcoming AITS events and
+                    revisit previous ones.
+                </p>
+
+            </div>
+
+
+            <div class="segmented-control">
+
+                <button
+                    class="event-filter active"
+                    type="button"
+                    data-event-filter="upcoming"
+                >
+                    Upcoming
+                </button>
+
+                <button
+                    class="event-filter"
+                    type="button"
+                    data-event-filter="past"
+                >
+                    Past
+                </button>
+
+            </div>
+
+
+            <div
+                class="events-list"
+                id="events-list"
+            ></div>
+
+        </section>
+
+        <!-- ==================================
+     EVENT DETAILS
+=================================== -->
+
+<section
+    class="page"
+    data-page="event-details"
+>
+
+    <button
+        class="back-button"
+        id="event-back-button"
+        type="button"
+    >
+        ← Back to Events
+    </button>
+
+
+    <div
+        class="event-details"
+        id="event-details"
+    >
+        <!-- JavaScript renders the event here -->
+    </div>
+
+</section>
+
+        <!-- ==================================
+             JOURNEY
+        =================================== -->
+
+        <section
+            class="page"
+            data-page="journey"
+        >
+
+            <div class="page-intro">
+
+                <p class="eyebrow">
+                    YOUR AITS EXPERIENCE
+                </p>
+
+                <h1>
+                    My Journey
+                </h1>
+
+                <p class="page-description">
+                    Keep track of your engagement,
+                    achievements and progress.
+                </p>
+
+            </div>
+
+
+            <section class="journey-summary">
+
+                <p id="journey-year">
+                    AY 2026–2027 • 1st Semester
+                </p>
+
+                <div class="journey-score">
+
+                    <strong id="journey-points">
+                        140
+                    </strong>
+
+                    <span>
+                        POINTS
+                    </span>
+
+                </div>
+
+                <p>
+                    Keep participating in AITS activities
+                    to grow your journey.
+                </p>
+
+            </section>
+
+
+            <!-- Activity -->
+
+            <section class="content-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            TIMELINE
+                        </p>
+
+                        <h2>
+                            Recent Activity
+                        </h2>
+
+                    </div>
+
+                    <button
+                        class="inline-link"
+                        id="view-all-activity"
+                        type="button"
+                    >
+                        View All →
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="activity-list"
+                    id="journey-activity"
+                ></div>
+
+            </section>
+
+
+            <!-- Badges -->
+
+            <section class="content-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            ACHIEVEMENTS
+                        </p>
+
+                        <h2>
+                            Badges
+                        </h2>
+
+                    </div>
+
+                    <button
+                        class="inline-link"
+                        id="view-all-badges"
+                        type="button"
+                    >
+                        View All →
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="badge-grid"
+                    id="badge-list"
+                ></div>
+
+            </section>
+
+        </section>
+
+    <!-- ==================================
+     ACTIVITY HISTORY
+=================================== -->
+
+<section
+    class="page"
+    data-page="activity-history"
+>
+
+    <button
+        class="back-button"
+        id="activity-back-button"
+        type="button"
+    >
+        ← Back to My Journey
+    </button>
+
+
+    <div class="page-intro">
+
+        <p class="eyebrow">
+            YOUR JOURNEY
+        </p>
+
+        <h1>
+            Activity History
+        </h1>
+
+        <p class="page-description">
+            Your points, achievements and engagement
+            throughout the academic year.
+        </p>
+
+    </div>
+
+
+    <div class="history-period">
+
+        <span>
+            AY 2026–2027
+        </span>
+
+        <span>
+            1st Semester
+        </span>
+
+    </div>
+
+
+    <div
+        class="activity-list"
+        id="activity-history-list"
+    ></div>
+
+</section>
+
+<!-- ==================================
+     BADGE COLLECTION
+=================================== -->
+
+<section
+    class="page"
+    data-page="badge-collection"
+>
+
+    <button
+        class="back-button"
+        id="badges-back-button"
+        type="button"
+    >
+        ← Back to My Journey
+    </button>
+
+
+    <div class="page-intro">
+
+        <p class="eyebrow">
+            ACHIEVEMENTS
+        </p>
+
+        <h1>
+            My Badges
+        </h1>
+
+        <p class="page-description">
+            Badges you've earned through your
+            participation and achievements in AITS.
+        </p>
+
+    </div>
+
+
+    <div class="badge-collection-summary">
+
+        <strong id="badge-count">
+            0
+        </strong>
+
+        <span>
+            BADGES EARNED
+        </span>
+
+    </div>
+
+
+    <div
+        class="badge-collection-grid"
+        id="badge-collection-list"
+    ></div>
+
+</section>
+
+<!-- ==================================
+     MY PROFILE
+=================================== -->
+
+<section
+    class="page"
+    data-page="profile"
+>
+
+    <button
+        class="back-button"
+        id="profile-back-button"
+        type="button"
+    >
+        ← Back
+    </button>
+
+
+    <div class="page-intro">
+
+        <p class="eyebrow">
+            ACCOUNT
+        </p>
+
+        <h1>
+            My Profile
+        </h1>
+
+        <p class="page-description">
+            Your AITS membership and account information.
+        </p>
+
+    </div>
+
+
+    <section class="profile-identity">
+
+        <div
+            class="profile-avatar-large"
+            id="profile-avatar-large"
+        >
+            CF
+        </div>
+
+
+        <div>
+
+            <h2 id="profile-full-name">
+                Charlene Frias Hortel
+            </h2>
+
+            <p id="profile-role-display">
+                Executive
+            </p>
+
+            <span id="profile-position-display">
+                Vice President Internal — WMA
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <section class="profile-section">
+
+        <p class="eyebrow">
+            MEMBER INFORMATION
+        </p>
+
+
+        <div class="profile-info-list">
+
+            <div class="profile-info-row">
+
+                <span>
+                    AITS Member ID
+                </span>
+
+                <strong id="profile-member-id">
+                    AITS-25011
+                </strong>
+
+            </div>
+
+
+            <div class="profile-info-row">
+
+                <span>
+                    Specialization
+                </span>
+
+                <strong id="profile-specialization">
+                    BSIT-WMA
+                </strong>
+
+            </div>
+
+
+            <div class="profile-info-row">
+
+                <span>
+                    Year Level
+                </span>
+
+                <strong id="profile-year-level">
+                    2nd Year
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="profile-section">
+
+        <p class="eyebrow">
+            MEMBERSHIP
+        </p>
+
+
+        <div class="profile-info-list">
+
+            <div class="profile-info-row">
+
+                <span>
+                    Academic Year
+                </span>
+
+                <strong id="profile-academic-year">
+                    AY 2026–2027
+                </strong>
+
+            </div>
+
+
+            <div class="profile-info-row">
+
+                <span>
+                    Status
+                </span>
+
+                <strong
+                    class="profile-active-status"
+                    id="profile-membership-status"
+                >
+                    Active
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="profile-section">
+
+        <p class="eyebrow">
+            ORGANIZATION
+        </p>
+
+
+        <div class="profile-info-list">
+
+            <div class="profile-info-row">
+
+                <span>
+                    Role
+                </span>
+
+                <strong id="profile-role">
+                    Executive
+                </strong>
+
+            </div>
+
+
+            <div class="profile-info-row">
+
+                <span>
+                    Position
+                </span>
+
+                <strong id="profile-position">
+                    Vice President Internal — WMA
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</section>
+
+<!-- ==================================
+     MANAGEMENT
+=================================== -->
+
+<section
+    class="page"
+    data-page="management"
+>
+
+    <div class="page-intro">
+
+        <p class="eyebrow">
+            OFFICER TOOLS
+        </p>
+
+        <h1>
+            Management
+        </h1>
+
+    </div>
+
+
+    <!-- Member Search -->
+
+    <button
+        class="management-search"
+        id="management-member-search"
+        type="button"
+    >
+
+        <div class="management-search-icon">
+            ⌕
+        </div>
+
+        <div class="management-search-content">
+
+            <strong>
+                Member Search
+            </strong>
+
+            <span>
+                Find a member by name or Member ID
+            </span>
+
+        </div>
+
+        <span class="management-arrow">
+            →
+        </span>
+
+    </button>
+
+
+    <!-- Quick Actions -->
+
+    <section class="management-section">
+
+        <div class="management-section-header">
+
+            <div>
+
+                <p class="eyebrow">
+                    SHORTCUTS
+                </p>
+
+                <h2>
+                    Quick Actions
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="quick-action-grid">
+
+            <button
+                class="quick-action"
+                id="open-scanner-button"
+                type="button"
+            >
+
+                <span class="quick-action-icon">
+                    ⌗
+                </span>
+
+                <span>
+                    Scan QR
+                </span>
+
+            </button>
+
+
+            <button
+                class="quick-action"
+                id="create-event-button"
+                type="button"
+            >
+
+                <span class="quick-action-icon">
+                    ＋
+                </span>
+
+                <span>
+                    Create Event
+                </span>
+
+            </button>
+
+
+            <button
+                class="quick-action"
+                id="adjust-points-button"
+                type="button"
+            >
+
+                <span class="quick-action-icon">
+                    ±
+                </span>
+
+                <span>
+                    Adjust Points
+                </span>
+
+            </button>
+
+
+            <button
+                class="quick-action"
+                id="search-member-button"
+                type="button"
+            >
+
+                <span class="quick-action-icon">
+                    ⌕
+                </span>
+
+                <span>
+                    Find Member
+                </span>
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- Needs Attention -->
+
+    <section class="management-section">
+
+        <div class="management-section-header">
+
+            <div>
+
+                <p class="eyebrow">
+                    OVERVIEW
+                </p>
+
+                <h2>
+                    Needs Attention
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="attention-list">
+
+            <button
+                class="attention-item"
+                type="button"
+            >
+
+                <div>
+
+                    <strong>
+                        Cybersecurity Workshop
+                    </strong>
+
+                    <span>
+                        Registration open
+                    </span>
+
+                </div>
+
+
+                <div class="attention-value">
+
+                    <strong>
+                        47 / 60
+                    </strong>
+
+                    <span>
+                        registered
+                    </span>
+
+                </div>
+
+            </button>
+
+
+            <button
+                class="attention-item"
+                type="button"
+            >
+
+                <div>
+
+                    <strong>
+                        Attendance Review
+                    </strong>
+
+                    <span>
+                        Records requiring review
+                    </span>
+
+                </div>
+
+
+                <div class="attention-count">
+                    3
+                </div>
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- Members -->
+
+    <section class="management-section">
+
+        <div class="management-section-header">
+
+            <div>
+
+                <p class="eyebrow">
+                    MEMBERSHIP
+                </p>
+
+                <h2>
+                    Members
+                </h2>
+
+            </div>
+
+
+            <button
+                class="inline-link"
+                id="view-member-records-button"
+                type="button"
+            >
+                View Records →
+            </button>
+
+        </div>
+
+
+        <div class="management-stat-grid">
+
+            <article class="management-stat">
+
+                <strong>
+                    245
+                </strong>
+
+                <span>
+                    Engaged
+                </span>
+
+            </article>
+
+
+            <article class="management-stat">
+
+                <strong>
+                    18
+                </strong>
+
+                <span>
+                    Low Engagement
+                </span>
+
+            </article>
+
+
+            <article class="management-stat">
+
+                <strong>
+                    7
+                </strong>
+
+                <span>
+                    No engagement
+                </span>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- Events -->
+
+    <section class="management-section">
+
+        <div class="management-section-header">
+
+            <div>
+
+                <p class="eyebrow">
+                    EVENTS
+                </p>
+
+                <h2>
+                    Event Management
+                </h2>
+
+            </div>
+
+
+            <button
+                class="inline-link"
+                id="manage-events-button"
+                type="button"
+            >
+                View Events →
+            </button>
+
+        </div>
+
+
+        <div class="management-summary-card">
+
+            <div>
+
+                <strong id="management-upcoming-count">
+                    0
+                </strong>
+
+                <span>
+                    Upcoming
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <strong id="management-completed-count">
+                    0
+                </strong>
+
+                <span>
+                    Completed
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Reports -->
+
+    <section class="management-section">
+
+        <div class="management-section-header">
+
+            <div>
+
+                <p class="eyebrow">
+                    RECORDS
+                </p>
+
+                <h2>
+                    Reports
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="management-link-list">
+
+            <button
+                class="management-link-row"
+                id="membership-report-button"
+                type="button"
+            >
+                <span>
+                    Membership Report
+                </span>
+
+                <span>
+                    →
+                </span>
+            </button>
+
+
+            <button
+                class="management-link-row"
+                id="engagement-report-button"
+                type="button"
+            >
+                <span>
+                    Engagement Report
+                </span>
+
+                <span>
+                    →
+                </span>
+            </button>
+
+        </div>
+
+    </section>
+
+</section>
+
+<!-- ==================================
+     MEMBER SEARCH
+=================================== -->
+
+<section
+    class="page"
+    data-page="member-search"
+>
+
+    <button
+        class="back-button"
+        id="member-search-back-button"
+        type="button"
+    >
+        ← Back to Management
+    </button>
+
+
+    <div class="page-intro">
+
+        <p class="eyebrow">
+            MANAGEMENT
+        </p>
+
+        <h1>
+            Member Search
+        </h1>
+
+        <p class="page-description">
+            Find an AITS member by name or Member ID.
+        </p>
+
+    </div>
+
+
+    <div class="member-search-box">
+
+        <span class="member-search-symbol">
+            ⌕
+        </span>
+
+        <input
+            id="member-search-input"
+            type="search"
+            placeholder="Search members..."
+            autocomplete="off"
+            aria-label="Search members"
+        >
+
+    </div>
+
+
+    <div
+        class="member-search-meta"
+        id="member-search-meta"
+    >
+        All members
+    </div>
+
+
+    <div
+        class="member-search-results"
+        id="member-search-results"
+    ></div>
+
+</section>
+
+<!-- ==================================
+     MEMBER RECORD
+=================================== -->
+
+<section
+    class="page"
+    data-page="member-record"
+>
+
+    <button
+        class="back-button"
+        id="member-record-back-button"
+        type="button"
+    >
+        ← Back to Member Search
+    </button>
+
+
+    <div
+        class="member-record"
+        id="member-record"
+    ></div>
+
+</section>
+
+<!-- ==================================
+     MEMBER RECORDS
+=================================== -->
+
+<section
+    class="page"
+    data-page="member-records"
+>
+
+    <button
+        class="back-button"
+        id="member-records-back-button"
+        type="button"
+    >
+        ← Back to Management
+    </button>
+
+
+    <div class="page-intro">
+
+        <p class="eyebrow">
+            MANAGEMENT
+        </p>
+
+        <h1>
+            Member Records
+        </h1>
+
+        <p class="page-description">
+            Browse current AITS membership and engagement records.
+        </p>
+
+    </div>
+
+
+    <div class="member-search-box">
+
+        <span class="member-search-symbol">
+            ⌕
+        </span>
+
+        <input
+            id="member-records-search"
+            type="search"
+            placeholder="Search records..."
+            autocomplete="off"
+            aria-label="Search member records"
+        >
+
+    </div>
+
+
+    <div class="record-filters">
+
+        <button
+            class="record-filter active"
+            type="button"
+            data-record-filter="all"
+        >
+            All
+        </button>
+
+        <button
+            class="record-filter"
+            type="button"
+            data-record-filter="engaged"
+        >
+            Engaged
+        </button>
+
+        <button
+            class="record-filter"
+            type="button"
+            data-record-filter="low"
+        >
+            Low Engagement
+        </button>
+
+        <button
+            class="record-filter"
+            type="button"
+            data-record-filter="none"
+        >
+            No Engagement
+        </button>
+
+    </div>
+
+
+    <div class="member-search-meta">
+
+        <span id="member-records-count">
+            0 members
+        </span>
+
+    </div>
+
+
+    <div
+        class="member-search-results"
+        id="member-records-list"
+    ></div>
+
+</section>
+
+<!-- ==================================
+     EVENT MANAGEMENT
+=================================== -->
+
+<section
+    class="page"
+    data-page="event-management"
+>
+
+    <button
+        class="back-button"
+        id="event-management-back-button"
+        type="button"
+    >
+        ← Back to Management
+    </button>
+
+
+    <div class="page-intro">
+
+        <p class="eyebrow">
+            MANAGEMENT
+        </p>
+
+        <h1>
+            Event Management
+        </h1>
+
+        <p class="page-description">
+            Create and manage AITS events.
+        </p>
+
+    </div>
+
+
+    <div class="event-management-header">
+
+        <div class="segmented-control event-management-filter">
+
+            <button
+                class="managed-event-filter active"
+                type="button"
+                data-managed-event-filter="upcoming"
+            >
+                Upcoming
+            </button>
+
+            <button
+                class="managed-event-filter"
+                type="button"
+                data-managed-event-filter="past"
+            >
+                Past
+            </button>
+
+        </div>
+
+
+        <button
+            class="primary-button event-create-button"
+            id="event-management-create-button"
+            type="button"
+        >
+            + Create Event
+        </button>
+
+    </div>
+
+
+    <div
+        class="managed-events-list"
+        id="managed-events-list"
+    ></div>
+
+</section>
+
+<!-- ==================================
+     CREATE EVENT
+=================================== -->
+
+<section
+    class="page"
+    data-page="create-event"
+>
+
+    <button
+        class="back-button"
+        id="create-event-back-button"
+        type="button"
+    >
+        ← Back to Event Management
+    </button>
+
+
+    <div class="page-intro">
+
+        <p class="eyebrow">
+            EVENT MANAGEMENT
+        </p>
+
+        <h1 id="event-form-title">
+            Create Event
+        </h1>
+
+        <p class="page-description">
+            Add a new AITS event.
+        </p>
+
+    </div>
+
+
+    <form
+        class="event-form"
+        id="create-event-form"
+    >
+
+        <section class="event-form-section">
+
+            <p class="eyebrow">
+                EVENT DETAILS
+            </p>
+
+
+            <div class="form-field">
+
+                <label for="event-title-input">
+                    Event Name
+                </label>
+
+                <input
+                    id="event-title-input"
+                    type="text"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label for="event-category-input">
+                    Category
+                </label>
+
+                <select
+                    id="event-category-input"
+                    required
+                >
+                    <option value="">
+                        Select category
+                    </option>
+
+                    <option value="Workshop">
+                        Workshop
+                    </option>
+
+                    <option value="Seminar">
+                        Seminar
+                    </option>
+
+                    <option value="General Assembly">
+                        General Assembly
+                    </option>
+
+                    <option value="Competition">
+                        Competition
+                    </option>
+
+                    <option value="Outreach">
+                        Outreach
+                    </option>
+
+                    <option value="Sports">
+                        Sports
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+                </select>
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label for="event-description-input">
+                    Description
+                </label>
+
+                <textarea
+                    id="event-description-input"
+                    rows="5"
+                    required
+                ></textarea>
+
+            </div>
+
+        </section>
+
+
+        <section class="event-form-section">
+
+            <p class="eyebrow">
+                SCHEDULE
+            </p>
+
+
+            <div class="form-row">
+
+                <div class="form-field">
+
+                    <label for="event-date-input">
+                        Date
+                    </label>
+
+                    <input
+                        id="event-date-input"
+                        type="date"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label for="event-time-input">
+                        Start Time
+                    </label>
+
+                    <input
+                        id="event-time-input"
+                        type="time"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label for="event-venue-input">
+                    Venue
+                </label>
+
+                <input
+                    id="event-venue-input"
+                    type="text"
+                    required
+                >
+
+            </div>
+
+        </section>
+
+
+        <section class="event-form-section">
+
+            <p class="eyebrow">
+                ENGAGEMENT
+            </p>
+
+
+            <div class="form-field">
+
+                <label for="event-points-input">
+                    Attendance Points
+                </label>
+
+                <input
+                    id="event-points-input"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value="10"
+                    required
+                >
+
+            </div>
+
+        </section>
+
+
+        <section class="event-form-section">
+
+            <div class="form-toggle-row">
+
+                <div>
+
+                    <strong>
+                        Registration
+                    </strong>
+
+                    <span>
+                        Require members to register before the event.
+                    </span>
+
+                </div>
+
+
+                <input
+                    id="event-registration-required"
+                    type="checkbox"
+                >
+
+            </div>
+
+
+            <div
+                class="registration-settings"
+                id="registration-settings"
+                hidden
+            >
+
+                <div class="form-row">
+
+                    <div class="form-field">
+
+                        <label for="event-capacity-input">
+                            Capacity
+                        </label>
+
+                        <input
+                            id="event-capacity-input"
+                            type="number"
+                            min="1"
+                            step="1"
+                        >
+
+                    </div>
+
+
+                    <div class="form-field">
+
+                        <label for="event-deadline-input">
+                            Registration Deadline
+                        </label>
+
+                        <input
+                            id="event-deadline-input"
+                            type="date"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <div class="event-form-actions">
+
+            <button
+                class="primary-button"
+                id="event-form-submit-button"
+                type="submit"
+            >
+                Create Event
+            </button>
+
+        </div>
+
+    </form>
+
+</section>
+
+<!-- ==================================
+     MANAGE EVENT
+=================================== -->
+
+<section
+    class="page"
+    data-page="manage-event"
+>
+
+    <button
+        class="back-button"
+        id="manage-event-back-button"
+        type="button"
+    >
+        ← Back to Event Management
+    </button>
+
+
+    <div
+        class="manage-event-details"
+        id="manage-event-details"
+    ></div>
+
+</section>
+
+<!-- ==================================
+     EVENT ATTENDANCE
+=================================== -->
+
+<section
+    class="page"
+    data-page="event-attendance"
+>
+
+    <button
+        class="back-button"
+        id="attendance-back-button"
+        type="button"
+    >
+        ← Back to Event
+    </button>
+
+
+    <div class="page-intro">
+
+        <p class="eyebrow">
+            EVENT MANAGEMENT
+        </p>
+
+        <h1 id="attendance-event-title">
+            Attendance
+        </h1>
+
+        <p
+            class="page-description"
+            id="attendance-event-meta"
+        ></p>
+
+    </div>
+
+
+    <section class="attendance-summary">
+
+        <div>
+
+            <strong id="attendance-count">
+                0
+            </strong>
+
+            <span>
+                ATTENDED
+            </span>
+
+        </div>
+
+
+        <div>
+
+            <strong id="attendance-total">
+                0
+            </strong>
+
+            <span>
+                MEMBERS
+            </span>
+
+        </div>
+
+
+        <div>
+
+            <strong id="attendance-rate">
+                0%
+            </strong>
+
+            <span>
+                ATTENDANCE
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <div class="member-search-box attendance-search">
+
+        <span class="member-search-symbol">
+            ⌕
+        </span>
+
+        <input
+            id="attendance-search-input"
+            type="search"
+            placeholder="Search member or ID"
+            autocomplete="off"
+        >
+
+    </div>
+
+
+    <p
+        class="member-search-meta"
+        id="attendance-results-count"
+    ></p>
+
+
+    <div
+        class="attendance-list"
+        id="attendance-list"
+    ></div>
+
+</section>
+
+</main>
+
+<!-- ==================================
+     BADGE MODAL
+=================================== -->
+
+<div
+    class="modal-overlay"
+    id="badge-modal"
+    aria-hidden="true"
+>
+
+    <div
+        class="badge-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="badge-modal-name"
+    >
+
+        <button
+            class="modal-close"
+            id="badge-modal-close"
+            type="button"
+            aria-label="Close badge details"
+        >
+            ×
+        </button>
+
+
+        <div
+            class="badge-modal-icon"
+            id="badge-modal-icon"
+        >
+            ✦
+        </div>
+
+
+        <h2 id="badge-modal-name">
+            Badge Name
+        </h2>
+
+
+        <p
+            class="badge-modal-description"
+            id="badge-modal-description"
+        >
+            Badge description.
+        </p>
+
+
+        <div class="badge-modal-earned">
+
+            <span>
+                EARNED
+            </span>
+
+            <strong id="badge-modal-date">
+                August 30, 2026
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ==================================
+     QR MODAL
+=================================== -->
+
+<div
+    class="modal-overlay"
+    id="qr-modal"
+    aria-hidden="true"
+>
+
+    <div
+        class="qr-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="qr-modal-title"
+    >
+
+        <button
+            class="modal-close"
+            id="qr-modal-close"
+            type="button"
+            aria-label="Close QR code"
+        >
+            ×
+        </button>
+
+
+        <p class="eyebrow">
+            AITS MEMBER QR
+        </p>
+
+
+        <h2 id="qr-modal-title">
+            Charlene Frias Hortel
+        </h2>
+
+
+        <div
+            class="qr-modal-code"
+            id="qr-modal-code"
+        ></div>
+
+
+        <strong id="qr-modal-member-id">
+            AITS-25011
+        </strong>
+
+    </div>
+
+</div>
+
+<!-- ==================================
+     EVENT STATUS MODAL
+=================================== -->
+
+<div
+    class="modal-overlay"
+    id="event-status-modal"
+    aria-hidden="true"
+>
+
+    <div
+        class="event-status-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="event-status-modal-title"
+    >
+
+        <button
+            class="modal-close"
+            id="event-status-modal-close"
+            type="button"
+            aria-label="Close event status"
+        >
+            ×
+        </button>
+
+
+        <p class="eyebrow">
+            EVENT STATUS
+        </p>
+
+        <h2 id="event-status-modal-title">
+            Manage Event Status
+        </h2>
+
+
+        <p class="event-status-modal-description">
+            Update the current status of this event.
+        </p>
+
+
+        <div
+            class="event-status-options"
+            id="event-status-options"
+        ></div>
+
+    </div>
+
+</div>
+
+    <!-- ==================================
+         MOBILE NAVIGATION
+    =================================== -->
+
+    <nav
+        class="bottom-nav"
+        aria-label="Main navigation"
+    >
+
+        <button
+            class="nav-button active"
+            type="button"
+            data-go-to="home"
+        >
+            <span class="nav-icon">
+                ⌂
+            </span>
+
+            <span>
+                Home
+            </span>
+        </button>
+
+
+        <button
+            class="nav-button"
+            type="button"
+            data-go-to="events"
+        >
+            <span class="nav-icon">
+                ◇
+            </span>
+
+            <span>
+                Events
+            </span>
+        </button>
+
+
+        <button
+            class="nav-button"
+            type="button"
+            data-go-to="journey"
+        >
+            <span class="nav-icon">
+                ✦
+            </span>
+
+            <span>
+                Journey
+            </span>
+        </button>
+
+    </nav>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+
+</body>
+
+</html>
