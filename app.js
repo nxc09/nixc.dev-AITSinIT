@@ -734,7 +734,10 @@ eventBackButton.addEventListener(
     "click",
     () => {
 
-        showPage("events");
+        showPage(
+            eventDetailsSource
+        );
+
 
     }
 );
@@ -957,13 +960,21 @@ let eventFormMode =
 let editingEventId =
     null;
 
-function openCreateEventPage() {
+let eventFormSource =
+    "event-management";
+
+function openCreateEventPage(
+    source = "event-management"
+) {
 
     eventFormMode =
         "create";
 
     editingEventId =
         null;
+
+    eventFormSource =
+        source;
 
 
     createEventForm.reset();
@@ -992,8 +1003,26 @@ function openCreateEventPage() {
     eventFormSubmitButton.textContent =
         "Create Event";
 
+
+    if (
+        eventFormSource ===
+        "management"
+    ) {
+
+        createEventBackButton.textContent =
+            "← Back to Management";
+
+    } else {
+
+        createEventBackButton.textContent =
+            "← Back to Event Management";
+
+    }
+
+
     setEventFormDateLimits();
-        
+
+
     showPage(
         "create-event"
     );
@@ -1028,6 +1057,10 @@ function openEditEventPage() {
 
     eventFormSubmitButton.textContent =
         "Save Changes";
+
+
+    createEventBackButton.textContent =
+    "← Back to Event";
 
 
     document.getElementById(
@@ -1148,7 +1181,13 @@ if (eventManagementCreateButton) {
 
     eventManagementCreateButton.addEventListener(
         "click",
-        openCreateEventPage
+        () => {
+
+            openCreateEventPage(
+                "event-management"
+            );
+
+        }
     );
 
 }
@@ -1158,7 +1197,13 @@ if (createEventQuickButton) {
 
     createEventQuickButton.addEventListener(
         "click",
-        openCreateEventPage
+        () => {
+
+            openCreateEventPage(
+                "management"
+            );
+
+        }
     );
 
 }
@@ -1169,6 +1214,8 @@ if (createEventBackButton) {
     createEventBackButton.addEventListener(
         "click",
         () => {
+
+            /* Editing an existing event */
 
             if (
                 eventFormMode === "edit"
@@ -1196,8 +1243,27 @@ if (createEventBackButton) {
                 );
 
                 return;
+
             }
 
+
+            /* Creating from Management */
+
+            if (
+                eventFormSource ===
+                "management"
+            ) {
+
+                showPage(
+                    "management"
+                );
+
+                return;
+
+            }
+
+
+            /* Creating from Event Management */
 
             showPage(
                 "event-management"
@@ -1431,7 +1497,8 @@ document
 
 
             openEventDetails(
-                eventCard.dataset.eventId
+                eventCard.dataset.eventId,
+                "home"
             );
 
         }
@@ -1588,10 +1655,26 @@ eventFilterButtons.forEach((button) => {
 let selectedEventId = null;
 
 
-function openEventDetails(eventId) {
+let eventDetailsSource =
+    "events";
+
+
+function openEventDetails(
+    eventId,
+    source = "events"
+) {
 
     selectedEventId =
         Number(eventId);
+
+    eventDetailsSource =
+        source;
+
+
+    eventBackButton.textContent =
+    eventDetailsSource === "home"
+        ? "← Back to Home"
+        : "← Back to Events";
 
 
     const event =
@@ -1609,6 +1692,7 @@ function openEventDetails(eventId) {
     renderEventDetails(event);
 
     showPage("event-details");
+
 }
 
 
@@ -2166,7 +2250,7 @@ eventsList.addEventListener(
 
 
         openEventDetails(
-            eventCard.dataset.eventId
+            eventCard.dataset.eventId,
         );
 
     }
