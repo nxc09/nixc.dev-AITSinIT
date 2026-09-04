@@ -1658,7 +1658,6 @@ function getEventStatusText(event) {
 
 
     if (
-        !event.registration ||
         !event.registration.required
     ) {
 
@@ -1677,11 +1676,10 @@ function getEventStatusText(event) {
 
 
     if (
-        event.registration.status ===
-        "closed"
+        event.registration.status === "closed"
     ) {
 
-        return "Registration Closed";
+        return "Registration closed";
 
     }
 
@@ -1698,7 +1696,7 @@ function getEventStatusText(event) {
 
     return "Registration Open";
 
-}
+    }
 
 
 function renderEvents(filter = "upcoming") {
@@ -2369,40 +2367,23 @@ function registerForSelectedEvent() {
 
     if (
         !event ||
-        !event.registration ||
         !event.registration.required
     ) {
-
         return;
-
-    }
-
-
-    if (
-        event.status !== "upcoming"
-    ) {
-
-        return;
-
     }
 
 
     if (
         event.registration.registered
     ) {
-
         return;
-
     }
 
 
     if (
-        event.registration.status !==
-        "open"
+        event.registration.status !== "open"
     ) {
-
         return;
-
     }
 
 
@@ -2410,15 +2391,11 @@ function registerForSelectedEvent() {
         event.registration.count >=
         event.registration.capacity
     ) {
-
         return;
-
     }
 
 
-    event.registration.registered =
-        true;
-
+    event.registration.registered = true;
 
     event.registration.count += 1;
 
@@ -2428,7 +2405,6 @@ function registerForSelectedEvent() {
     renderEvents();
 
     renderHomeEvent();
-
 }
 
 
@@ -2448,43 +2424,23 @@ function cancelSelectedRegistration() {
 
     if (
         !event ||
-        !event.registration ||
         !event.registration.required
     ) {
-
         return;
-
     }
 
 
     if (
-        !event.registration.registered
+        !event.registration.registered ||
+        event.registration.status !== "open"
     ) {
-
         return;
-
     }
 
 
-    if (
-        event.registration.status !==
-        "open"
-    ) {
+    event.registration.registered = false;
 
-        return;
-
-    }
-
-
-    event.registration.registered =
-        false;
-
-
-    event.registration.count =
-        Math.max(
-            0,
-            event.registration.count - 1
-        );
+    event.registration.count -= 1;
 
 
     renderEventDetails(event);
@@ -2492,11 +2448,10 @@ function cancelSelectedRegistration() {
     renderEvents();
 
     renderHomeEvent();
-
 }
 
 /* =========================================
-ACTIVITY
+   ACTIVITY
 ========================================= */
 
 function createActivityMarkup(activity) {
@@ -3524,22 +3479,6 @@ function validateEventSchedule(
     deadlineValue
 ) {
 
-    if (
-        !dateValue ||
-        !timeValue ||
-        !endDateValue ||
-        !endTimeValue
-    ) {
-
-        return {
-            valid: false,
-            message:
-                "Please provide the complete event schedule."
-        };
-
-    }
-
-
     const today =
         new Date();
 
@@ -3551,6 +3490,11 @@ function validateEventSchedule(
         0
     );
 
+
+    /* =====================================
+       EVENT DATE
+       Must be at least 5 days from today
+    ====================================== */
 
     const minimumEventDate =
         new Date(today);
@@ -3568,21 +3512,6 @@ function validateEventSchedule(
 
 
     if (
-        Number.isNaN(
-            eventDate.getTime()
-        )
-    ) {
-
-        return {
-            valid: false,
-            message:
-                "Please provide a valid event date."
-        };
-
-    }
-
-
-    if (
         eventDate <
         minimumEventDate
     ) {
@@ -3596,61 +3525,11 @@ function validateEventSchedule(
     }
 
 
-    const eventStart =
-        new Date(
-            `${dateValue}T${timeValue}`
-        );
-
-
-    const eventEnd =
-        new Date(
-            `${endDateValue}T${endTimeValue}`
-        );
-
-
-    if (
-        Number.isNaN(
-            eventStart.getTime()
-        ) ||
-        Number.isNaN(
-            eventEnd.getTime()
-        )
-    ) {
-
-        return {
-            valid: false,
-            message:
-                "Please provide a valid event schedule."
-        };
-
-    }
-
-
-    if (
-        eventEnd <= eventStart
-    ) {
-
-        return {
-            valid: false,
-            message:
-                "The event must end after it starts."
-        };
-
-    }
-
+    /* =====================================
+       REGISTRATION DEADLINE
+    ====================================== */
 
     if (registrationRequired) {
-
-        if (!deadlineValue) {
-
-            return {
-                valid: false,
-                message:
-                    "Please provide a registration deadline."
-            };
-
-        }
-
 
         const registrationDeadline =
             new Date(
@@ -3658,20 +3537,8 @@ function validateEventSchedule(
             );
 
 
-        if (
-            Number.isNaN(
-                registrationDeadline.getTime()
-            )
-        ) {
-
-            return {
-                valid: false,
-                message:
-                    "Please provide a valid registration deadline."
-            };
-
-        }
-
+        /* Deadline cannot be today
+           or in the past */
 
         if (
             registrationDeadline <=
@@ -3686,6 +3553,9 @@ function validateEventSchedule(
 
         }
 
+
+        /* Latest deadline =
+           2 days before event */
 
         const latestDeadline =
             new Date(eventDate);
@@ -3711,16 +3581,60 @@ function validateEventSchedule(
 
     }
 
+    /* =====================================
+    EVENT SCHEDULE
+    ===================================== */
+
+    if (
+        !dateValue ||
+        !timeValue ||
+        !endDateValue ||
+        !endTimeValue
+    ) {
+
+        return {
+            valid: false,
+            message:
+                "Please provide the complete event schedule."
+        };
+
+    }
+
+
+    const eventStart =
+        new Date(
+            `${dateValue}T${timeValue}`
+        );
+
+
+    const eventEnd =
+        new Date(
+            `${endDateValue}T${endTimeValue}`
+        );
+
+
+    if (
+        eventEnd <= eventStart
+    ) {
+
+        return {
+            valid: false,
+            message:
+                "The event must end after it starts."
+        };
+
+    }
+
 
     return {
         valid: true
     };
 
-}
+    }
 
 
 /* =========================================
-EVENT FORM DATE LIMITS
+   EVENT FORM DATE LIMITS
 ========================================= */
 
 function setEventFormDateLimits() {
@@ -4191,32 +4105,11 @@ createEventForm.addEventListener(
                 newEvent.points;
 
 
-            if (
-                newEvent.registration.required
-            ) {
-
-                const previousRegistration =
-                    existingEvent.registration;
-
-
-                newEvent.registration.registered =
-                    previousRegistration &&
-                    previousRegistration.required
-                        ? previousRegistration.registered
-                        : false;
-
-
-                newEvent.registration.count =
-                    previousRegistration &&
-                    previousRegistration.required
-                        ? previousRegistration.count
-                        : 0;
-
-            }
-
-
             existingEvent.registration =
                 newEvent.registration;
+
+
+            /* Detect Rescheduling */
 
             if (
                 (
@@ -4345,88 +4238,84 @@ createEventForm.addEventListener(
 
     function getEffectiveEventStatus(event) {
 
-    /*
-       Cancelled remains a manual override.
-    */
+        /*
+        Cancelled remains a manual override.
+        */
 
-    if (
-        event.status === "cancelled"
-    ) {
+        if (
+            event.status === "cancelled"
+        ) {
 
-        return "cancelled";
+            return "cancelled";
+
+        }
+
+
+        /*
+        Older mock events without machine-readable
+        schedule values keep their existing status.
+        */
+
+        if (
+            !event.dateValue ||
+            !event.timeValue ||
+            !event.endDateValue ||
+            !event.endTimeValue
+        ) {
+
+            return event.status;
+
+        }
+
+
+        const eventStart =
+            new Date(
+                `${event.dateValue}T${event.timeValue}`
+            );
+
+
+        const eventEnd =
+            new Date(
+                `${event.endDateValue}T${event.endTimeValue}`
+            );
+
+
+        const now =
+            new Date();
+
+
+        if (now < eventStart) {
+
+            return "upcoming";
+
+        }
+
+
+        if (now < eventEnd) {
+
+            return "ongoing";
+
+        }
+
+
+        return "past";
 
     }
 
+    function updateAutomaticEventStatuses() {
 
-    /*
-       Older mock events without a complete
-       machine-readable schedule keep their
-       existing status.
-    */
+        events.forEach(
+            (event) => {
 
-    if (
-        !event.dateValue ||
-        !event.timeValue ||
-        !event.endDateValue ||
-        !event.endTimeValue
-    ) {
+                event.status =
+                    getEffectiveEventStatus(
+                        event
+                    );
 
-        return event.status;
-
-    }
-
-
-    const eventStart =
-        new Date(
-            `${event.dateValue}T${event.timeValue}`
+            }
         );
 
-
-    const eventEnd =
-        new Date(
-            `${event.endDateValue}T${event.endTimeValue}`
-        );
-
-
-    if (
-        Number.isNaN(
-            eventStart.getTime()
-        ) ||
-        Number.isNaN(
-            eventEnd.getTime()
-        )
-    ) {
-
-        return event.status;
-
     }
-
-
-    const now =
-        new Date();
-
-
-    if (
-        now < eventStart
-    ) {
-
-        return "upcoming";
-
-    }
-
-
-    if (
-        now < eventEnd
-    ) {
-
-        return "ongoing";
-
-    }
-
-
-    return "past";
-
-}
 
     /* =========================================
     AUTOMATIC REGISTRATION STATUS
@@ -4456,20 +4345,6 @@ createEventForm.addEventListener(
                     new Date(
                         `${event.registration.deadlineValue}T23:59:59`
                     );
-
-
-                if (
-                    Number.isNaN(
-                        deadline.getTime()
-                    )
-                ) {
-
-                    event.registration.status =
-                        "closed";
-
-                    return;
-
-                }
 
 
                 if (
@@ -4531,66 +4406,46 @@ createEventForm.addEventListener(
 
     function getManagedEventStatus(event) {
 
-    if (
-        event.status === "cancelled"
-    ) {
+        if (event.status === "cancelled") {
+            return "Cancelled";
+        }
 
-        return "Cancelled";
 
+        if (event.status === "past") {
+            return "Completed";
+        }
+
+
+        if (event.status === "ongoing") {
+            return "Ongoing";
+        }
+
+
+        if (
+            !event.registration ||
+            !event.registration.required
+        ) {
+            return "No Registration";
+        }
+
+
+        if (
+            event.registration.status === "closed"
+        ) {
+            return "Registration Closed";
+        }
+
+
+        if (
+            event.registration.count >=
+            event.registration.capacity
+        ) {
+            return "Registration Full";
+        }
+
+
+        return "Registration Open";
     }
-
-
-    if (
-        event.status === "past"
-    ) {
-
-        return "Completed";
-
-    }
-
-
-    if (
-        event.status === "ongoing"
-    ) {
-
-        return "Ongoing";
-
-    }
-
-
-    if (
-        !event.registration ||
-        !event.registration.required
-    ) {
-
-        return "No Registration";
-
-    }
-
-
-    if (
-        event.registration.status ===
-        "closed"
-    ) {
-
-        return "Registration Closed";
-
-    }
-
-
-    if (
-        event.registration.count >=
-        event.registration.capacity
-    ) {
-
-        return "Registration Full";
-
-    }
-
-
-    return "Registration Open";
-
-}
 
 
 function renderManagedEvents() {
