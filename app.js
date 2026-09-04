@@ -927,7 +927,13 @@ if (manageEventsButton) {
         "click",
         () => {
 
+            updateAutomaticEventStatuses();
+
+            updateAutomaticRegistrationStatuses();
+
             renderManagedEvents();
+
+            renderManagementEventSummary();
 
             showPage(
                 "event-management"
@@ -1139,7 +1145,7 @@ function openEditEventPage() {
     }
 
 
-    /* Event date */
+    /* Event start date */
 
     document.getElementById(
         "event-date-input"
@@ -1147,12 +1153,29 @@ function openEditEventPage() {
         selectedEvent.dateValue || "";
 
 
-    /* Event time */
+    /* Event start time */
 
     document.getElementById(
         "event-time-input"
     ).value =
         selectedEvent.timeValue || "";
+
+
+    /* Event end date */
+
+    document.getElementById(
+        "event-end-date-input"
+    ).value =
+        selectedEvent.endDateValue ||
+        selectedEvent.dateValue || "";
+
+
+    /* Event end time */
+
+    document.getElementById(
+        "event-end-time-input"
+    ).value =
+        selectedEvent.endTimeValue || "";
 
 
     /* Apply current date restrictions */
@@ -1311,6 +1334,11 @@ document.getElementById(
                 "event-date-input"
             );
 
+        const endDateInput =
+            document.getElementById(
+                "event-end-date-input"
+            );
+
         const deadlineInput =
             document.getElementById(
                 "event-deadline-input"
@@ -1318,6 +1346,13 @@ document.getElementById(
 
 
         if (!eventDateInput.value) {
+
+            endDateInput.value =
+                "";
+
+            endDateInput.removeAttribute(
+                "min"
+            );
 
             deadlineInput.removeAttribute(
                 "max"
@@ -1327,17 +1362,48 @@ document.getElementById(
         }
 
 
+        /*
+           End Date cannot be before
+           Start Date.
+        */
+
+        endDateInput.min =
+            eventDateInput.value;
+
+
+        /*
+           For normal same-day events,
+           automatically use Start Date
+           as the End Date.
+        */
+
+        if (
+            !endDateInput.value ||
+            endDateInput.value <
+                eventDateInput.value
+        ) {
+
+            endDateInput.value =
+                eventDateInput.value;
+
+        }
+
+
+        /*
+           Registration must close at
+           least 2 days before Start Date.
+        */
+
         const eventDate =
             new Date(
                 `${eventDateInput.value}T00:00:00`
             );
 
 
-        /* Deadline must be at least
-           2 days before the event */
-
         const latestDeadline =
-            new Date(eventDate);
+            new Date(
+                eventDate
+            );
 
 
         latestDeadline.setDate(
@@ -1348,17 +1414,22 @@ document.getElementById(
         deadlineInput.max =
             [
                 latestDeadline.getFullYear(),
+
                 String(
                     latestDeadline.getMonth() + 1
                 ).padStart(2, "0"),
+
                 String(
                     latestDeadline.getDate()
                 ).padStart(2, "0")
             ].join("-");
 
 
-        /* Remove an already selected
-           deadline if it became invalid */
+        /*
+           Clear an existing deadline
+           if changing Start Date made
+           it invalid.
+        */
 
         if (
             deadlineInput.value &&
@@ -1391,9 +1462,26 @@ if (manageEventBackButton) {
 
 }
 
-/* =========================================
-   HOME EVENT
-========================================= */
+function getEventDateDisplay(event) {
+
+    if (
+        !event.endDateValue ||
+        event.dateValue ===
+            event.endDateValue
+    ) {
+
+        return event.date;
+
+    }
+
+
+    return `${event.date} – ${event.endDate}`;
+
+}
+
+    /* =========================================
+    HOME EVENT
+    ========================================= */
 
 function renderHomeEvent() {
 
@@ -1401,6 +1489,10 @@ function renderHomeEvent() {
         document.getElementById("home-event");
 
     const upcomingEvent =
+        events.find(
+            (event) =>
+                event.status === "ongoing"
+        ) ||
         events.find(
             (event) =>
                 event.status === "upcoming"
@@ -1423,12 +1515,31 @@ function renderHomeEvent() {
         "No registration required";
 
 
-    if (upcomingEvent.registration.required) {
+    if (
+        upcomingEvent.status === "ongoing"
+    ) {
 
-        if (upcomingEvent.registration.registered) {
+        registrationText =
+            "Ongoing Now";
+
+    } else if (
+        upcomingEvent.registration.required
+    ) {
+
+        if (
+            upcomingEvent.registration.registered
+        ) {
 
             registrationText =
                 "You're registered";
+
+        } else if (
+            upcomingEvent.registration.status ===
+            "closed"
+        ) {
+
+            registrationText =
+                "Registration closed";
 
         } else if (
             upcomingEvent.registration.count >=
@@ -1468,7 +1579,7 @@ function renderHomeEvent() {
             </h3>
 
             <p>
-                ${upcomingEvent.date}
+                ${getEventDateDisplay(upcomingEvent)}
                 <br>
                 ${upcomingEvent.time}
                 <br>
@@ -1505,29 +1616,73 @@ document
     );
 
 
-/* =========================================
-   EVENTS
-========================================= */
+    /* =========================================
+    EVENTS
+    ========================================= */
 
 function getEventStatusText(event) {
 
-    if (event.status === "past") {
+    if (
+        event.status === "ongoing"
+    ) {
 
-        if (event.attended) {
-            return `✓ Attended • +${event.pointsEarned} pts`;
+        return "Ongoing Now";
+
+    }
+
+
+    if (
+        event.status === "past"
+    ) {
+
+        const attendanceRecord =
+            getAttendanceRecord(
+                event.id,
+                currentMember.memberId
+            );
+
+
+        if (
+            attendanceRecord &&
+            attendanceRecord.attended
+        ) {
+
+            return `✓ Attended • +${attendanceRecord.pointsEarned} pts`;
+
         }
 
+
         return "Did not attend";
+
     }
 
 
-    if (!event.registration.required) {
+    if (
+        !event.registration ||
+        !event.registration.required
+    ) {
+
         return "No registration required";
+
     }
 
 
-    if (event.registration.registered) {
+    if (
+        event.registration.registered
+    ) {
+
         return "✓ Registered";
+
+    }
+
+
+    if (
+        event.registration.status ===
+        "closed"
+    ) {
+
+        return "Registration Closed";
+
     }
 
 
@@ -1535,21 +1690,41 @@ function getEventStatusText(event) {
         event.registration.count >=
         event.registration.capacity
     ) {
-        return "Registration full";
+
+        return "Registration Full";
+
     }
 
 
-    return "Registration open";
+    return "Registration Open";
+
 }
 
 
 function renderEvents(filter = "upcoming") {
 
     const filteredEvents =
-        events.filter(
-            (event) =>
+    events.filter(
+        (event) => {
+
+            if (
+                filter === "upcoming"
+            ) {
+
+                return (
+                    event.status === "upcoming" ||
+                    event.status === "ongoing"
+                );
+
+            }
+
+
+            return (
                 event.status === filter
-        );
+            );
+
+        }
+    );
 
 
     if (filteredEvents.length === 0) {
@@ -1568,8 +1743,16 @@ function renderEvents(filter = "upcoming") {
         filteredEvents
             .map((event) => {
 
+                const attendanceRecord =
+                    getAttendanceRecord(
+                        event.id,
+                        currentMember.memberId
+                    );
+
+
                 const attendedClass =
-                    event.attended
+                    attendanceRecord &&
+                    attendanceRecord.attended
                         ? "attended"
                         : "";
 
@@ -1708,7 +1891,7 @@ function renderEventDetails(event) {
 
 
     /* =====================================
-       UPCOMING EVENT
+    UPCOMING EVENT
     ====================================== */
 
     if (event.status === "upcoming") {
@@ -1740,7 +1923,10 @@ function renderEventDetails(event) {
                 event.registration;
 
 
-            if (registration.registered) {
+            if (
+                registration.registered &&
+                registration.status === "open"
+            ) {
 
                 participationMarkup = `
                     <section class="event-detail-section">
@@ -1765,6 +1951,53 @@ function renderEventDetails(event) {
                         >
                             Cancel Registration
                         </button>
+
+                    </section>
+                `;
+
+            } else if (
+                registration.registered &&
+                registration.status === "closed"
+            ) {
+
+                participationMarkup = `
+                    <section class="event-detail-section">
+
+                        <p class="eyebrow">
+                            REGISTRATION
+                        </p>
+
+                        <div class="registration-success">
+                            ✓ You're Registered
+                        </div>
+
+                        <p class="event-detail-text">
+                            Registration is now closed.
+                            Your slot remains reserved.
+                        </p>
+
+                    </section>
+                `;
+
+            } else if (
+                registration.status === "closed"
+            ) {
+
+                participationMarkup = `
+                    <section class="event-detail-section">
+
+                        <p class="eyebrow">
+                            REGISTRATION
+                        </p>
+
+                        <h2>
+                            Registration Closed
+                        </h2>
+
+                        <p class="event-detail-text">
+                            Registration for this event
+                            is no longer accepting entries.
+                        </p>
 
                     </section>
                 `;
@@ -1886,14 +2119,58 @@ function renderEventDetails(event) {
 
     }
 
+    /* =====================================
+    ONGOING EVENT
+    ===================================== */
+
+    if (
+        event.status === "ongoing"
+    ) {
+
+        participationMarkup = `
+
+            <section class="event-detail-section">
+
+                <p class="eyebrow">
+                    EVENT STATUS
+                </p>
+
+                <div class="attendance-success">
+                    Event Ongoing
+                </div>
+
+                <p class="event-detail-text">
+                    This event is currently in progress.
+                </p>
+
+            </section>
+        `;
+
+    }
 
     /* =====================================
-       PAST EVENT
-    ====================================== */
+    PAST EVENT
+    ===================================== */
 
-    if (event.status === "past") {
+    if (
+        event.status === "past"
+    ) {
 
-        if (event.attended) {
+        const attendanceRecord =
+            getAttendanceRecord(
+                event.id,
+                currentMember.memberId
+            );
+
+
+        const attended =
+            Boolean(
+                attendanceRecord &&
+                attendanceRecord.attended
+            );
+
+
+        if (attended) {
 
             participationMarkup = `
                 <section class="event-detail-section">
@@ -1907,7 +2184,7 @@ function renderEventDetails(event) {
                     </div>
 
                     <div class="points-earned">
-                        +${event.pointsEarned}
+                        +${attendanceRecord.pointsEarned}
                         <span>PTS</span>
                     </div>
 
@@ -1964,7 +2241,7 @@ function renderEventDetails(event) {
                     </span>
 
                     <strong>
-                        ${event.date}
+                        ${getEventDateDisplay(event)}
                     </strong>
                 </div>
 
@@ -2078,6 +2355,11 @@ function attachEventDetailListeners() {
 
 function registerForSelectedEvent() {
 
+    updateAutomaticEventStatuses();
+
+    updateAutomaticRegistrationStatuses();
+
+
     const event =
         events.find(
             (event) =>
@@ -2087,14 +2369,40 @@ function registerForSelectedEvent() {
 
     if (
         !event ||
+        !event.registration ||
         !event.registration.required
     ) {
+
         return;
+
     }
 
 
-    if (event.registration.registered) {
+    if (
+        event.status !== "upcoming"
+    ) {
+
         return;
+
+    }
+
+
+    if (
+        event.registration.registered
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        event.registration.status !==
+        "open"
+    ) {
+
+        return;
+
     }
 
 
@@ -2102,11 +2410,15 @@ function registerForSelectedEvent() {
         event.registration.count >=
         event.registration.capacity
     ) {
+
         return;
+
     }
 
 
-    event.registration.registered = true;
+    event.registration.registered =
+        true;
+
 
     event.registration.count += 1;
 
@@ -2116,10 +2428,16 @@ function registerForSelectedEvent() {
     renderEvents();
 
     renderHomeEvent();
+
 }
 
 
 function cancelSelectedRegistration() {
+
+    updateAutomaticEventStatuses();
+
+    updateAutomaticRegistrationStatuses();
+
 
     const event =
         events.find(
@@ -2130,20 +2448,43 @@ function cancelSelectedRegistration() {
 
     if (
         !event ||
+        !event.registration ||
         !event.registration.required
     ) {
+
         return;
+
     }
 
 
-    if (!event.registration.registered) {
+    if (
+        !event.registration.registered
+    ) {
+
         return;
+
     }
 
 
-    event.registration.registered = false;
+    if (
+        event.registration.status !==
+        "open"
+    ) {
 
-    event.registration.count -= 1;
+        return;
+
+    }
+
+
+    event.registration.registered =
+        false;
+
+
+    event.registration.count =
+        Math.max(
+            0,
+            event.registration.count - 1
+        );
 
 
     renderEventDetails(event);
@@ -2151,10 +2492,11 @@ function cancelSelectedRegistration() {
     renderEvents();
 
     renderHomeEvent();
+
 }
 
 /* =========================================
-   ACTIVITY
+ACTIVITY
 ========================================= */
 
 function createActivityMarkup(activity) {
@@ -3175,9 +3517,28 @@ memberRecordsList.addEventListener(
 
 function validateEventSchedule(
     dateValue,
+    timeValue,
+    endDateValue,
+    endTimeValue,
     registrationRequired,
     deadlineValue
 ) {
+
+    if (
+        !dateValue ||
+        !timeValue ||
+        !endDateValue ||
+        !endTimeValue
+    ) {
+
+        return {
+            valid: false,
+            message:
+                "Please provide the complete event schedule."
+        };
+
+    }
+
 
     const today =
         new Date();
@@ -3190,11 +3551,6 @@ function validateEventSchedule(
         0
     );
 
-
-    /* =====================================
-       EVENT DATE
-       Must be at least 5 days from today
-    ====================================== */
 
     const minimumEventDate =
         new Date(today);
@@ -3212,6 +3568,21 @@ function validateEventSchedule(
 
 
     if (
+        Number.isNaN(
+            eventDate.getTime()
+        )
+    ) {
+
+        return {
+            valid: false,
+            message:
+                "Please provide a valid event date."
+        };
+
+    }
+
+
+    if (
         eventDate <
         minimumEventDate
     ) {
@@ -3225,11 +3596,61 @@ function validateEventSchedule(
     }
 
 
-    /* =====================================
-       REGISTRATION DEADLINE
-    ====================================== */
+    const eventStart =
+        new Date(
+            `${dateValue}T${timeValue}`
+        );
+
+
+    const eventEnd =
+        new Date(
+            `${endDateValue}T${endTimeValue}`
+        );
+
+
+    if (
+        Number.isNaN(
+            eventStart.getTime()
+        ) ||
+        Number.isNaN(
+            eventEnd.getTime()
+        )
+    ) {
+
+        return {
+            valid: false,
+            message:
+                "Please provide a valid event schedule."
+        };
+
+    }
+
+
+    if (
+        eventEnd <= eventStart
+    ) {
+
+        return {
+            valid: false,
+            message:
+                "The event must end after it starts."
+        };
+
+    }
+
 
     if (registrationRequired) {
+
+        if (!deadlineValue) {
+
+            return {
+                valid: false,
+                message:
+                    "Please provide a registration deadline."
+            };
+
+        }
+
 
         const registrationDeadline =
             new Date(
@@ -3237,8 +3658,20 @@ function validateEventSchedule(
             );
 
 
-        /* Deadline cannot be today
-           or in the past */
+        if (
+            Number.isNaN(
+                registrationDeadline.getTime()
+            )
+        ) {
+
+            return {
+                valid: false,
+                message:
+                    "Please provide a valid registration deadline."
+            };
+
+        }
+
 
         if (
             registrationDeadline <=
@@ -3253,9 +3686,6 @@ function validateEventSchedule(
 
         }
 
-
-        /* Latest deadline =
-           2 days before event */
 
         const latestDeadline =
             new Date(eventDate);
@@ -3285,7 +3715,13 @@ function validateEventSchedule(
     return {
         valid: true
     };
+
 }
+
+
+/* =========================================
+EVENT FORM DATE LIMITS
+========================================= */
 
 function setEventFormDateLimits() {
 
@@ -3347,6 +3783,12 @@ function setEventFormDateLimits() {
         );
 
 
+    const endDateInput =
+        document.getElementById(
+            "event-end-date-input"
+        );
+
+
     const deadlineInput =
         document.getElementById(
             "event-deadline-input"
@@ -3354,6 +3796,13 @@ function setEventFormDateLimits() {
 
 
     eventDateInput.min =
+        formatDateForInput(
+            minimumEventDate
+        );
+
+
+    endDateInput.min =
+        eventDateInput.value ||
         formatDateForInput(
             minimumEventDate
         );
@@ -3410,10 +3859,19 @@ createEventForm.addEventListener(
                 "event-date-input"
             ).value;
 
+        const endDateValue =
+            document.getElementById(
+                "event-end-date-input"
+            ).value;
 
         const timeValue =
             document.getElementById(
                 "event-time-input"
+            ).value;
+
+        const endTimeValue =
+            document.getElementById(
+                "event-end-time-input"
             ).value;
 
 
@@ -3446,6 +3904,9 @@ createEventForm.addEventListener(
         const scheduleValidation =
             validateEventSchedule(
                 dateValue,
+                timeValue,
+                endDateValue,
+                endTimeValue,
                 registrationRequired,
                 deadlineValue
             );
@@ -3481,6 +3942,23 @@ createEventForm.addEventListener(
             );
 
 
+        const eventEndDate =
+            new Date(
+                `${endDateValue}T00:00:00`
+            );
+
+
+        const formattedEndDate =
+            eventEndDate.toLocaleDateString(
+                "en-US",
+                {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric"
+                }
+            );
+
+
         const shortDate =
             eventDate
                 .toLocaleDateString(
@@ -3498,6 +3976,17 @@ createEventForm.addEventListener(
         const formattedTime =
             new Date(
                 `2000-01-01T${timeValue}`
+            ).toLocaleTimeString(
+                "en-US",
+                {
+                    hour: "numeric",
+                    minute: "2-digit"
+                }
+            );
+
+        const formattedEndTime =
+            new Date(
+                `2000-01-01T${endTimeValue}`
             ).toLocaleTimeString(
                 "en-US",
                 {
@@ -3535,14 +4024,23 @@ createEventForm.addEventListener(
             dateValue:
                 dateValue,
 
+            endDate:
+                formattedEndDate,
+
+            endDateValue:
+                endDateValue,
+
             shortDate:
                 shortDate,
 
             time:
-                formattedTime,
+                `${formattedTime} – ${formattedEndTime}`,
 
             timeValue:
                 timeValue,
+
+            endTimeValue:
+                endTimeValue,
 
             venue:
                 venue,
@@ -3606,9 +4104,9 @@ createEventForm.addEventListener(
         }
 
 
-        /* =====================================
-           EDIT EXISTING EVENT
-        ====================================== */
+    /* =====================================
+    EDIT EXISTING EVENT
+    ====================================== */
 
         if (
             eventFormMode === "edit"
@@ -3630,9 +4128,16 @@ createEventForm.addEventListener(
             const oldDateValue =
                 existingEvent.dateValue;
 
+            
+            const oldEndDateValue =
+                existingEvent.endDateValue;
+
 
             const oldTimeValue =
                 existingEvent.timeValue;
+
+            const oldEndTimeValue =
+                existingEvent.endTimeValue;
 
 
             existingEvent.title =
@@ -3651,8 +4156,16 @@ createEventForm.addEventListener(
                 newEvent.date;
 
 
+            existingEvent.endDate =
+                newEvent.endDate;
+
+
             existingEvent.dateValue =
                 newEvent.dateValue;
+
+
+            existingEvent.endDateValue =
+                newEvent.endDateValue;
 
 
             existingEvent.shortDate =
@@ -3666,6 +4179,9 @@ createEventForm.addEventListener(
             existingEvent.timeValue =
                 newEvent.timeValue;
 
+            existingEvent.endTimeValue =
+                newEvent.endTimeValue;
+
 
             existingEvent.venue =
                 newEvent.venue;
@@ -3675,11 +4191,32 @@ createEventForm.addEventListener(
                 newEvent.points;
 
 
+            if (
+                newEvent.registration.required
+            ) {
+
+                const previousRegistration =
+                    existingEvent.registration;
+
+
+                newEvent.registration.registered =
+                    previousRegistration &&
+                    previousRegistration.required
+                        ? previousRegistration.registered
+                        : false;
+
+
+                newEvent.registration.count =
+                    previousRegistration &&
+                    previousRegistration.required
+                        ? previousRegistration.count
+                        : 0;
+
+            }
+
+
             existingEvent.registration =
                 newEvent.registration;
-
-
-            /* Detect Rescheduling */
 
             if (
                 (
@@ -3688,9 +4225,19 @@ createEventForm.addEventListener(
                         newEvent.dateValue
                 ) ||
                 (
+                    oldEndDateValue &&
+                    oldEndDateValue !==
+                        newEvent.endDateValue
+                ) ||
+                (
                     oldTimeValue &&
                     oldTimeValue !==
                         newEvent.timeValue
+                ) ||
+                (
+                    oldEndTimeValue &&
+                    oldEndTimeValue !==
+                        newEvent.endTimeValue
                 )
             ) {
 
@@ -3706,51 +4253,55 @@ createEventForm.addEventListener(
         }
 
 
-        /* =====================================
-           CREATE NEW EVENT
-        ====================================== */
+    /* =====================================
+    CREATE NEW EVENT
+    ====================================== */
 
-        else {
+    else {
 
-            events.push(
-                newEvent
+        events.push(
+            newEvent
+        );
+
+    }
+
+
+    /* Refresh Event Views */
+
+    currentManagedEventFilter =
+        "upcoming";
+
+
+    managedEventFilterButtons.forEach(
+        (button) => {
+
+            button.classList.toggle(
+                "active",
+                button.dataset
+                    .managedEventFilter ===
+                    "upcoming"
             );
 
         }
+    );
 
 
-        /* Refresh Event Views */
+    updateAutomaticEventStatuses();
 
-        currentManagedEventFilter =
-            "upcoming";
+    updateAutomaticRegistrationStatuses();
 
+    renderManagedEvents();
 
-        managedEventFilterButtons.forEach(
-            (button) => {
+    renderEvents();
 
-                button.classList.toggle(
-                    "active",
-                    button.dataset
-                        .managedEventFilter ===
-                        "upcoming"
-                );
+    renderHomeEvent();
 
-            }
-        );
+    renderManagementEventSummary();
 
 
-        renderManagedEvents();
-
-        renderEvents();
-
-        renderHomeEvent();
-
-        renderManagementEventSummary();
-
-
-        /* =====================================
-           NAVIGATION AFTER SAVE
-        ====================================== */
+    /* =====================================
+    NAVIGATION AFTER SAVE
+    ====================================== */
 
         if (
             eventFormMode === "edit"
@@ -3788,51 +4339,222 @@ createEventForm.addEventListener(
     }
 );
 
-/* =========================================
-   MANAGEMENT EVENT SUMMARY
-========================================= */
+    /* =========================================
+    AUTOMATIC EVENT STATUS
+    ========================================= */
 
-function renderManagementEventSummary() {
+    function getEffectiveEventStatus(event) {
 
-    const upcomingCount =
-        events.filter(
-            (event) =>
-                event.status === "upcoming"
-        ).length;
+    /*
+       Cancelled remains a manual override.
+    */
 
+    if (
+        event.status === "cancelled"
+    ) {
 
-    const completedCount =
-        events.filter(
-            (event) =>
-                event.status === "past"
-        ).length;
+        return "cancelled";
 
-
-    managementUpcomingCount.textContent =
-        upcomingCount;
-
-
-    managementCompletedCount.textContent =
-        completedCount;
-}
-
-/* =========================================
-   EVENT MANAGEMENT
-========================================= */
-
-let currentManagedEventFilter =
-    "upcoming";
-
-
-function getManagedEventStatus(event) {
-
-    if (event.status === "cancelled") {
-        return "Cancelled";
     }
 
 
-    if (event.status === "past") {
+    /*
+       Older mock events without a complete
+       machine-readable schedule keep their
+       existing status.
+    */
+
+    if (
+        !event.dateValue ||
+        !event.timeValue ||
+        !event.endDateValue ||
+        !event.endTimeValue
+    ) {
+
+        return event.status;
+
+    }
+
+
+    const eventStart =
+        new Date(
+            `${event.dateValue}T${event.timeValue}`
+        );
+
+
+    const eventEnd =
+        new Date(
+            `${event.endDateValue}T${event.endTimeValue}`
+        );
+
+
+    if (
+        Number.isNaN(
+            eventStart.getTime()
+        ) ||
+        Number.isNaN(
+            eventEnd.getTime()
+        )
+    ) {
+
+        return event.status;
+
+    }
+
+
+    const now =
+        new Date();
+
+
+    if (
+        now < eventStart
+    ) {
+
+        return "upcoming";
+
+    }
+
+
+    if (
+        now < eventEnd
+    ) {
+
+        return "ongoing";
+
+    }
+
+
+    return "past";
+
+}
+
+    /* =========================================
+    AUTOMATIC REGISTRATION STATUS
+    ========================================= */
+
+    function updateAutomaticRegistrationStatuses() {
+
+        const now =
+            new Date();
+
+
+        events.forEach(
+            (event) => {
+
+                if (
+                    !event.registration ||
+                    !event.registration.required ||
+                    !event.registration.deadlineValue
+                ) {
+
+                    return;
+
+                }
+
+
+                const deadline =
+                    new Date(
+                        `${event.registration.deadlineValue}T23:59:59`
+                    );
+
+
+                if (
+                    Number.isNaN(
+                        deadline.getTime()
+                    )
+                ) {
+
+                    event.registration.status =
+                        "closed";
+
+                    return;
+
+                }
+
+
+                if (
+                    now > deadline ||
+                    event.status !== "upcoming"
+                ) {
+
+                    event.registration.status =
+                        "closed";
+
+                } else {
+
+                    event.registration.status =
+                        "open";
+
+                }
+
+            }
+        );
+
+    }
+
+    /* =========================================
+    MANAGEMENT EVENT SUMMARY
+    ========================================= */
+
+    function renderManagementEventSummary() {
+
+        const upcomingCount =
+            events.filter(
+                (event) =>
+                    event.status === "upcoming" ||
+                    event.status === "ongoing"
+            ).length;
+
+
+        const completedCount =
+            events.filter(
+                (event) =>
+                    event.status === "past"
+            ).length;
+
+
+        managementUpcomingCount.textContent =
+            upcomingCount;
+
+
+        managementCompletedCount.textContent =
+            completedCount;
+    }
+
+    /* =========================================
+    EVENT MANAGEMENT
+    ========================================= */
+
+    let currentManagedEventFilter =
+        "upcoming";
+
+
+    function getManagedEventStatus(event) {
+
+    if (
+        event.status === "cancelled"
+    ) {
+
+        return "Cancelled";
+
+    }
+
+
+    if (
+        event.status === "past"
+    ) {
+
         return "Completed";
+
+    }
+
+
+    if (
+        event.status === "ongoing"
+    ) {
+
+        return "Ongoing";
+
     }
 
 
@@ -3840,7 +4562,19 @@ function getManagedEventStatus(event) {
         !event.registration ||
         !event.registration.required
     ) {
+
         return "No Registration";
+
+    }
+
+
+    if (
+        event.registration.status ===
+        "closed"
+    ) {
+
+        return "Registration Closed";
+
     }
 
 
@@ -3848,11 +4582,14 @@ function getManagedEventStatus(event) {
         event.registration.count >=
         event.registration.capacity
     ) {
+
         return "Registration Full";
+
     }
 
 
     return "Registration Open";
+
 }
 
 
@@ -3868,8 +4605,8 @@ function renderManagedEvents() {
             ) {
 
                 return (
-                    event.status ===
-                    "upcoming"
+                    event.status === "upcoming" ||
+                    event.status === "ongoing"
                 );
 
             }
@@ -3956,7 +4693,7 @@ function renderManagedEvents() {
                             </h2>
 
                             <p>
-                                ${event.date}
+                                ${getEventDateDisplay(event)}
                                 •
                                 ${event.time}
                             </p>
@@ -4209,45 +4946,11 @@ function renderManagedEventDetails(event) {
     let attendanceMarkup = "";
 
 
-    if (event.status === "past") {
+    /* =====================================
+    CANCELLED
+    ===================================== */
 
-        attendanceMarkup = `
-
-            <section class="manage-event-section">
-
-                <div class="manage-event-section-header">
-
-                    <div>
-
-                        <p class="eyebrow">
-                            ATTENDANCE
-                        </p>
-
-                        <h2>
-                            Attendance Records
-                        </h2>
-
-                    </div>
-
-                    <button
-                        class="inline-link"
-                        id="view-event-attendance-button"
-                        type="button"
-                    >
-                        View Attendance →
-                    </button>
-
-                </div>
-
-                <p class="manage-event-text">
-                    Review attendance records and participation
-                    for this event.
-                </p>
-
-            </section>
-        `;
-
-    } else if (
+    if (
         event.status === "cancelled"
     ) {
 
@@ -4271,7 +4974,16 @@ function renderManagedEventDetails(event) {
             </section>
         `;
 
-    } else {
+    }
+
+
+    /* =====================================
+    UPCOMING
+    ===================================== */
+
+    else if (
+        event.status === "upcoming"
+    ) {
 
         attendanceMarkup = `
 
@@ -4282,12 +4994,80 @@ function renderManagedEventDetails(event) {
                 </p>
 
                 <h2>
-                    Attendance
+                    Attendance Not Open
                 </h2>
 
                 <p class="manage-event-text">
-                    Attendance tools will become available
-                    for this event.
+                    Attendance will become available
+                    when the event begins.
+                </p>
+
+            </section>
+        `;
+
+    }
+
+
+    /* =====================================
+    ONGOING / COMPLETED
+    ===================================== */
+
+    else {
+
+        const attendanceCountForEvent =
+            attendanceRecords.filter(
+                (record) =>
+                    record.eventId === event.id &&
+                    record.attended
+            ).length;
+
+
+        attendanceMarkup = `
+
+            <section class="manage-event-section">
+
+                <div class="manage-event-section-header">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            ATTENDANCE
+                        </p>
+
+                        <h2>
+                            ${
+                                event.status === "ongoing"
+                                    ? "Manage Attendance"
+                                    : "Attendance Records"
+                            }
+                        </h2>
+
+                    </div>
+
+
+                    <button
+                        class="inline-link"
+                        id="view-event-attendance-button"
+                        type="button"
+                    >
+                        ${
+                            event.status === "ongoing"
+                                ? "Take Attendance →"
+                                : "View Attendance →"
+                        }
+                    </button>
+
+                </div>
+
+
+                <p class="manage-event-text">
+                    ${attendanceCountForEvent}
+                    member${
+                        attendanceCountForEvent === 1
+                            ? ""
+                            : "s"
+                    }
+                    marked attended.
                 </p>
 
             </section>
@@ -4319,9 +5099,11 @@ function renderManagedEventDetails(event) {
                 ${
                     event.status === "upcoming"
                         ? "Upcoming"
-                        : event.status === "cancelled"
-                            ? "Cancelled"
-                            : "Completed"
+                        : event.status === "ongoing"
+                            ? "Ongoing"
+                            : event.status === "cancelled"
+                                ? "Cancelled"
+                                : "Completed"
                 }
             </span>
 
@@ -4355,7 +5137,7 @@ function renderManagedEventDetails(event) {
                     </span>
 
                     <strong>
-                        ${event.date}
+                        ${getEventDateDisplay(event)}
                     </strong>
 
                 </div>
@@ -4464,6 +5246,208 @@ function getAttendanceRecord(
 
 }
 
+function getMemberById(memberId) {
+
+    return members.find(
+        (member) =>
+            member.memberId === memberId
+    );
+
+}
+
+
+function getAttendanceActivityId(
+    eventId,
+    memberId
+) {
+
+    return `attendance-${eventId}-${memberId}`;
+
+}
+
+
+function addAttendancePoints(
+    selectedEvent,
+    member
+) {
+
+    const points =
+        selectedEvent.points ??
+        selectedEvent.pointsEarned ??
+        0;
+
+
+    member.points += points;
+
+
+    /*
+       Keep the signed-in member object
+       synchronized with the member record.
+    */
+
+    if (
+        member.memberId ===
+        currentMember.memberId
+    ) {
+
+        currentMember.points =
+            member.points;
+
+    }
+
+
+    /*
+       Journey activity is currently only
+       rendered for the signed-in member.
+    */
+
+    if (
+        member.memberId ===
+        currentMember.memberId
+    ) {
+
+        const activityId =
+            getAttendanceActivityId(
+                selectedEvent.id,
+                member.memberId
+            );
+
+
+        const alreadyExists =
+            activities.some(
+                (activity) =>
+                    activity.id === activityId
+            );
+
+
+        if (!alreadyExists) {
+
+            activities.unshift({
+                id:
+                    activityId,
+
+                type:
+                    "points",
+
+                title:
+                    selectedEvent.title,
+
+                description:
+                    "Event attendance",
+
+                amount:
+                    points,
+
+                date:
+                    selectedEvent.shortDate
+            });
+
+        }
+
+    }
+
+}
+
+
+function removeAttendancePoints(
+    selectedEvent,
+    member
+) {
+
+    const points =
+        selectedEvent.points ??
+        selectedEvent.pointsEarned ??
+        0;
+
+
+    member.points =
+        Math.max(
+            0,
+            member.points - points
+        );
+
+
+    if (
+        member.memberId ===
+        currentMember.memberId
+    ) {
+
+        currentMember.points =
+            member.points;
+
+
+        const activityId =
+            getAttendanceActivityId(
+                selectedEvent.id,
+                member.memberId
+            );
+
+
+        const activityIndex =
+            activities.findIndex(
+                (activity) =>
+                    activity.id === activityId
+            );
+
+
+        if (activityIndex !== -1) {
+
+            activities.splice(
+                activityIndex,
+                1
+            );
+
+        }
+
+    }
+
+}
+
+function updateMemberEngagementStatus(
+    member
+) {
+
+    if (member.points >= 50) {
+
+        member.engagementStatus =
+            "engaged";
+
+        return;
+    }
+
+
+    if (member.points > 0) {
+
+        member.engagementStatus =
+            "low";
+
+        return;
+    }
+
+
+    member.engagementStatus =
+        "none";
+
+}
+
+function refreshAttendanceDependentViews() {
+
+    members.forEach(
+        updateMemberEngagementStatus
+    );
+
+
+    renderMemberInformation();
+
+    renderActivities();
+
+    renderActivityHistory();
+
+    renderMemberRecords();
+
+}
+
+
 
 function openEventAttendance() {
 
@@ -4477,11 +5461,13 @@ function openEventAttendance() {
 
     if (
         !selectedEvent ||
-        selectedEvent.status !== "past"
+        (
+            selectedEvent.status !== "ongoing" &&
+            selectedEvent.status !== "past"
+        )
     ) {
         return;
     }
-
 
     attendanceSearchInput.value =
         "";
@@ -4514,7 +5500,7 @@ function renderEventAttendance(
 
 
     attendanceEventMeta.textContent =
-        `${selectedEvent.date} • ${selectedEvent.venue}`;
+        `${getEventDateDisplay(selectedEvent)} • ${selectedEvent.venue}`;
 
 
     const filteredMembers =
@@ -4717,6 +5703,17 @@ attendanceList.addEventListener(
                 .attendanceMemberId;
 
 
+        const member =
+            getMemberById(
+                memberId
+            );
+
+
+        if (!member) {
+            return;
+        }
+
+
         let record =
             getAttendanceRecord(
                 selectedEvent.id,
@@ -4724,22 +5721,60 @@ attendanceList.addEventListener(
             );
 
 
+        /*
+           Existing attendance record
+        */
+
         if (record) {
 
-            record.attended =
-                !record.attended;
+            if (record.attended) {
+
+                record.attended =
+                    false;
 
 
-            record.pointsEarned =
-                record.attended
-                    ? (
-                        selectedEvent.points ??
-                        selectedEvent.pointsEarned ??
-                        0
-                    )
-                    : 0;
+                record.pointsEarned =
+                    0;
 
-        } else {
+
+                removeAttendancePoints(
+                    selectedEvent,
+                    member
+                );
+
+            } else {
+
+                record.attended =
+                    true;
+
+
+                record.pointsEarned =
+                    selectedEvent.points ??
+                    selectedEvent.pointsEarned ??
+                    0;
+
+
+                addAttendancePoints(
+                    selectedEvent,
+                    member
+                );
+
+            }
+
+        }
+
+
+        /*
+           First attendance record
+        */
+
+        else {
+
+            const points =
+                selectedEvent.points ??
+                selectedEvent.pointsEarned ??
+                0;
+
 
             record = {
 
@@ -4753,9 +5788,7 @@ attendanceList.addEventListener(
                     true,
 
                 pointsEarned:
-                    selectedEvent.points ??
-                    selectedEvent.pointsEarned ??
-                    0
+                    points
 
             };
 
@@ -4764,7 +5797,16 @@ attendanceList.addEventListener(
                 record
             );
 
+
+            addAttendancePoints(
+                selectedEvent,
+                member
+            );
+
         }
+
+
+        refreshAttendanceDependentViews();
 
 
         renderEventAttendance(
@@ -5059,6 +6101,9 @@ eventStatusModal.addEventListener(
 ========================================= */
 
 function initializeApp() {
+    updateAutomaticEventStatuses();
+
+    updateAutomaticRegistrationStatuses();
 
     renderMemberInformation();
 
